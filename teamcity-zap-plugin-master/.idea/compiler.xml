@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="teamcity-echo-plugin-common" />
+        <module name="teamcity-echo-plugin-agent" />
+        <module name="teamcity-echo-plugin-server" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="build" target="1.5" />
+      <module name="teamcity-echo-plugin" target="1.5" />
+      <module name="teamcity-echo-plugin-agent" target="1.7" />
+      <module name="teamcity-echo-plugin-common" target="1.7" />
+      <module name="teamcity-echo-plugin-server" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
