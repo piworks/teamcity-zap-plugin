@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static jetbrains.teamcity.EchoRunnerConstants.MESSAGE_KEY;
+import static jetbrains.teamcity.EchoRunnerConstants.ZAP_PATH;
 
 public class EchoRunner extends RunType {
 
@@ -52,7 +53,14 @@ public class EchoRunner extends RunType {
       if (message == null) {
         invalidProperties.add(new InvalidProperty(MESSAGE_KEY, "Should not be null"));
       }
+
+      final String z_path = properties.get(ZAP_PATH);
+      if (z_path == null) {
+        invalidProperties.add(new InvalidProperty(ZAP_PATH, "Should not be null"));
+      }
       return invalidProperties;
+
+
     };
   }
 
@@ -78,6 +86,6 @@ public class EchoRunner extends RunType {
   @NotNull
   @Override
   public String describeParameters(@NotNull Map<String, String> parameters) {
-    return "Message: '" + parameters.get(MESSAGE_KEY) + "'";
+    return "Url: '" + parameters.get(MESSAGE_KEY) + "'\n" + "Zap Path: '" + parameters.get(ZAP_PATH) + "'";
   }
 }

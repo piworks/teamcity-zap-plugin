@@ -3,5 +3,5 @@
 <c:set var="messageId" value="<%=EchoRunnerConstants.MESSAGE_KEY%>"/>
 
 <div class="parameter">
-    Message: <props:displayValue name="${messageId}" emptyValue=""/>
+    URL: <props:displayValue name="${messageId}" emptyValue=""/>
 </div>
