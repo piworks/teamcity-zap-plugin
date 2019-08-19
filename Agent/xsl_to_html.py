@@ -1,10 +1,10 @@
 import io
+import os
 import sys
 import lxml.html
 from lxml import etree
 
 def InsertXSLTSheetIntoXmlReport(xmlreportfile, xsltfile, xmlreportfileout):
-    
     xslt_doc = etree.parse(xsltfile)
     xslt_transformer = etree.XSLT(xslt_doc)
     
@@ -27,6 +27,7 @@ def PrettyReport(xmlreportfileout):
         fout.write(line)
     fin.close()
     fout.close()
+    os.remove("UglyZapReport.html")
 
 InsertXSLTSheetIntoXmlReport(sys.argv[1], sys.argv[2], sys.argv[3])
 PrettyReport(sys.argv[3])
