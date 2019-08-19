@@ -33,7 +33,7 @@ public class EchoService extends BuildServiceAdapter {
     String zapPath = getRunnerParameters().get(EchoRunnerConstants.ZAP_PATH);
     zapPath = zapPath.replace(" ", "` ");
 
-    return new SimpleProgramCommandLine(getRunnerContext(), "powershell.exe", Collections.singletonList("New-Item -Path 'ZapReportXML.xml' -ItemType File -force;"  + "New-Item -Path 'ZapReport.html' -ItemType File -force;"  + " java -Xmx512m -jar \""+ zapPath + "zap-2.8.0.jar\" -cmd -quickurl \""+ url +"\" -quickout \"ZapReportXML.xml\" -quickprogress -config api.key=12345; C:\\Users\\furkan.yangil\\AppData\\Local\\Programs\\Python\\Python37\\python.exe xsl_to_html.py ZapReportXML.xml report.html.xsl ZapReport.html"));
+    return new SimpleProgramCommandLine(getRunnerContext(), "powershell.exe", Collections.singletonList("New-Item -Path 'ZapReportXML.xml' -ItemType File -force;"  + "New-Item -Path 'ZapReport.html' -ItemType File -force;"  + " java -Xmx512m -jar \""+ zapPath + "zap-2.8.0.jar\" -cmd -quickurl \""+ url +"\" -quickout \"ZapReportXML.xml\" -quickprogress -config api.key=12345; C:\\Users\\furkan.yangil\\AppData\\Local\\Programs\\Python\\Python37\\python.exe xsl_to_html.py ZapReportXML.xml " + zapPath + "xml\\report.html.xsl ZapReport.html"));
   }
 
   String getCustomScript(String scriptContent) throws RunBuildException {
