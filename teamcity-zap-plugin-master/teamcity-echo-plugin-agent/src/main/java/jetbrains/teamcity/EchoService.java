@@ -30,10 +30,18 @@ public class EchoService extends BuildServiceAdapter {
   public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
 
     final String url = getRunnerParameters().get(EchoRunnerConstants.MESSAGE_KEY);
-    String zapPath = getRunnerParameters().get(EchoRunnerConstants.ZAP_PATH);
-    zapPath = zapPath.replace(" ", "` ");
+    String zapPathOriginal = getRunnerParameters().get(EchoRunnerConstants.ZAP_PATH);
+    String zapPath = zapPathOriginal.replace(" ", "` ");
 
-    return new SimpleProgramCommandLine(getRunnerContext(), "powershell.exe", Collections.singletonList("New-Item -Path 'ZapReportXML.xml' -ItemType File -force;"  + "New-Item -Path 'ZapReport.html' -ItemType File -force;"  + " java -Xmx512m -jar \""+ zapPath + "zap-2.8.0.jar\" -cmd -quickurl \""+ url +"\" -quickout \"ZapReportXML.xml\" -quickprogress -config api.key=12345; C:\\Users\\furkan.yangil\\AppData\\Local\\Programs\\Python\\Python37\\python.exe xsl_to_html.py ZapReportXML.xml " + zapPath + "xml\\report.html.xsl ZapReport.html"));
+    //"C:\\Users\\furkan.yangil\\AppData\\Local\\Programs\\Python\\Python37\\python.exe xsl_to_html.py ZapReportXML.xml " + zapPath + "xml\\report.html.xsl ZapReport.html"
+
+    String create_XML = "New-Item -Path 'ZapReportXML.xml' -ItemType File -force;";
+    String create_xmlreport  = "New-Item -Path 'ZapReport.html' -ItemType File -force;";
+    String run_zap = " java -Xmx512m -jar \""+ zapPath + "zap-2.8.0.jar\" -cmd -quickurl \""+ url +"\" -quickout \"ZapReportXML.xml\" -quickprogress -config api.key=12345;";
+    String xml_to_html = "$XSLFileName = 'report.html.xsl' ; $XSLFileInput = '" + zapPathOriginal + "xml\\' + $XSLFileName ; $XMLFileName = 'ZapReportXML.xml' ; $XMLInputFile = $XMLFileName ; $OutPutFileName = 'ZapReport.html' ; $XMLOutputFile = $OutPutFileName ; $XSLInputElement = New-Object System.Xml.Xsl.XslCompiledTransform; ; $XSLInputElement.Load($XSLFileInput) ; $XSLInputElement.Transform($XMLInputFile, $XMLOutputFile);";
+    String pretty_html = "((Get-Content -path ZapReport.html -Raw) -replace '&lt;p&gt;','' -replace '&lt;/p&gt;','') | Set-Content -Path ZapReport.html;";
+
+    return new SimpleProgramCommandLine(getRunnerContext(), "powershell.exe", Collections.singletonList( create_XML + create_xmlreport + run_zap + xml_to_html + pretty_html));
   }
 
   String getCustomScript(String scriptContent) throws RunBuildException {
