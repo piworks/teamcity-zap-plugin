@@ -15,5 +15,5 @@ ZAP path must be specified in the build step.
  
 = How To Use
 
-Simply enter URL you want to scan and your ZAP path in the Zap Security build step.
+Simply enter URL you want to scan, your ZAP path and risk level to fail upon in the Zap Security build step.
 Once the run is complete you can view your report at ZAP Security Report section inside the build logs.

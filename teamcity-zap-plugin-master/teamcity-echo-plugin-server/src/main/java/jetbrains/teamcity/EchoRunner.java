@@ -13,8 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static jetbrains.teamcity.EchoRunnerConstants.MESSAGE_KEY;
-import static jetbrains.teamcity.EchoRunnerConstants.ZAP_PATH;
+import static jetbrains.teamcity.EchoRunnerConstants.*;
 
 public class EchoRunner extends RunType {
 
@@ -86,6 +85,6 @@ public class EchoRunner extends RunType {
   @NotNull
   @Override
   public String describeParameters(@NotNull Map<String, String> parameters) {
-    return "Url: '" + parameters.get(MESSAGE_KEY) + "'\n" + "Zap Path: '" + parameters.get(ZAP_PATH) + "'";
+    return "Url: '" + parameters.get(MESSAGE_KEY) + "'\n" + "Zap Path: '" + parameters.get(ZAP_PATH) + "'\n" + "Fail on Risk Level: '" + parameters.get(FAIL_OPT) +"'";
   }
 }

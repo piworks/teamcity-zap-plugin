@@ -32,16 +32,20 @@ public class EchoService extends BuildServiceAdapter {
     final String url = getRunnerParameters().get(EchoRunnerConstants.MESSAGE_KEY);
     String zapPathOriginal = getRunnerParameters().get(EchoRunnerConstants.ZAP_PATH);
     String zapPath = zapPathOriginal.replace(" ", "` ");
+    zapPath = zapPath.replace("(", "`(");
+    zapPath = zapPath.replace(")", "`)");
+    String failOpt = getRunnerParameters().get(EchoRunnerConstants.FAIL_OPT);
 
     //"C:\\Users\\furkan.yangil\\AppData\\Local\\Programs\\Python\\Python37\\python.exe xsl_to_html.py ZapReportXML.xml " + zapPath + "xml\\report.html.xsl ZapReport.html"
 
     String create_XML = "New-Item -Path 'ZapReportXML.xml' -ItemType File -force;";
-    String create_xmlreport  = "New-Item -Path 'ZapReport.html' -ItemType File -force;";
+    String create_report  = "New-Item -Path 'ZapReport.html' -ItemType File -force;";
     String run_zap = " java -Xmx512m -jar \""+ zapPath + "zap-2.8.0.jar\" -cmd -quickurl \""+ url +"\" -quickout \"ZapReportXML.xml\" -quickprogress -config api.key=12345;";
     String xml_to_html = "$XSLFileName = 'report.html.xsl' ; $XSLFileInput = '" + zapPathOriginal + "xml\\' + $XSLFileName ; $XMLFileName = 'ZapReportXML.xml' ; $XMLInputFile = $XMLFileName ; $OutPutFileName = 'ZapReport.html' ; $XMLOutputFile = $OutPutFileName ; $XSLInputElement = New-Object System.Xml.Xsl.XslCompiledTransform; ; $XSLInputElement.Load($XSLFileInput) ; $XSLInputElement.Transform($XMLInputFile, $XMLOutputFile);";
     String pretty_html = "((Get-Content -path ZapReport.html -Raw) -replace '&lt;p&gt;','' -replace '&lt;/p&gt;','') | Set-Content -Path ZapReport.html;";
+    String error = checkRisk(failOpt);
 
-    return new SimpleProgramCommandLine(getRunnerContext(), "powershell.exe", Collections.singletonList( create_XML + create_xmlreport + run_zap + xml_to_html + pretty_html));
+    return new SimpleProgramCommandLine(getRunnerContext(), "powershell.exe", Collections.singletonList( create_XML + create_report + run_zap + xml_to_html + pretty_html + error));
   }
 
   String getCustomScript(String scriptContent) throws RunBuildException {
@@ -74,21 +78,20 @@ public class EchoService extends BuildServiceAdapter {
     }
     myFilesToDelete.clear();
   }
-  /*
-  public void createReport() throws Exception {
 
-    File stylesheet = new File( "report.html.xsl");
-    File xmlfile  = new File("ZapReportXML.xml");
-    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    DocumentBuilder db = dbf.newDocumentBuilder();
-    Document document = db.parse(xmlfile);
-    StreamSource stylesource = new StreamSource(stylesheet);
-    TransformerFactory tf = TransformerFactory.newInstance();
-    Transformer transformer = tf.newTransformer(stylesource);
-    DOMSource source = new DOMSource(document);
-    //The Html output is in ZapReport.html
-    StreamResult result = new StreamResult("ZapReport.html");
-    transformer.transform(source,result);
+  public String checkRisk(String risk) {
+
+    String riskResult = "";
+
+    switch(risk){
+      case "Low":
+        riskResult += "if((Get-Content ZapReport.html | Where-Object { $_.Contains('a name=\"\"low\"\"') } ).Count) {echo \"Found` a` low` risk` threat!\"; exit 1};";
+      case "Medium":
+        riskResult += "if((Get-Content ZapReport.html | Where-Object { $_.Contains('a name=\"\"medium\"\"') } ).Count) {echo \"Found` a` medium` risk` threat!\"; exit 1};";
+      case "High":
+        riskResult += "if((Get-Content ZapReport.html | Where-Object { $_.Contains('a name=\"\"high\"\"') } ).Count) {echo \"Found` a` high` risk` threat!\"; exit 1};";
+        break;
+    }
+    return riskResult;
   }
-  */
 }
