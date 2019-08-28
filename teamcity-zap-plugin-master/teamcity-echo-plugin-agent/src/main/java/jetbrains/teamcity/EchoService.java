@@ -36,16 +36,19 @@ public class EchoService extends BuildServiceAdapter {
     zapPath = zapPath.replace(")", "`)");
     String failOpt = getRunnerParameters().get(EchoRunnerConstants.FAIL_OPT);
 
-    //"C:\\Users\\furkan.yangil\\AppData\\Local\\Programs\\Python\\Python37\\python.exe xsl_to_html.py ZapReportXML.xml " + zapPath + "xml\\report.html.xsl ZapReport.html"
+    //The provided URL is not valid:
+    //Failed to attack the URL:
+    //String create_zap_log = "New-Item -Path 'zap_log.txt' -ItemType File -force;";
 
     String create_XML = "New-Item -Path 'ZapReportXML.xml' -ItemType File -force;";
     String create_report  = "New-Item -Path 'ZapReport.html' -ItemType File -force;";
-    String run_zap = " java -Xmx512m -jar \""+ zapPath + "zap-2.8.0.jar\" -cmd -quickurl \""+ url +"\" -quickout \"ZapReportXML.xml\" -quickprogress -config api.key=12345;";
+    String run_zap = " java -Xmx512m -jar \""+ zapPath + "zap-2.8.0.jar\" -cmd -quickurl \""+ url +"\" -quickout \"ZapReportXML.xml\" -quickprogress -config api.key=12345 | Tee-Object -file zap_log.txt;";
+    String check_zap_log = "if((Get-Content zap_log.txt | Where-Object { $_.Contains('The provided URL is not valid:') } ).Count) {echo \"The` provided` URL` is` not` valid.\"; exit 1}; if((Get-Content zap_log.txt | Where-Object { $_.Contains('Failed to attack the URL:') } ).Count) {echo \"Failed` to` attack` the` URL.\"; exit 1};";
     String xml_to_html = "$XSLFileName = 'report.html.xsl' ; $XSLFileInput = '" + zapPathOriginal + "xml\\' + $XSLFileName ; $XMLFileName = 'ZapReportXML.xml' ; $XMLInputFile = $XMLFileName ; $OutPutFileName = 'ZapReport.html' ; $XMLOutputFile = $OutPutFileName ; $XSLInputElement = New-Object System.Xml.Xsl.XslCompiledTransform; ; $XSLInputElement.Load($XSLFileInput) ; $XSLInputElement.Transform($XMLInputFile, $XMLOutputFile);";
     String pretty_html = "((Get-Content -path ZapReport.html -Raw) -replace '&lt;p&gt;','' -replace '&lt;/p&gt;','') | Set-Content -Path ZapReport.html;";
     String error = checkRisk(failOpt);
 
-    return new SimpleProgramCommandLine(getRunnerContext(), "powershell.exe", Collections.singletonList( create_XML + create_report + run_zap + xml_to_html + pretty_html + error));
+    return new SimpleProgramCommandLine(getRunnerContext(), "powershell.exe", Collections.singletonList( create_XML + create_report + run_zap + check_zap_log + xml_to_html + pretty_html + error));
   }
 
   String getCustomScript(String scriptContent) throws RunBuildException {
